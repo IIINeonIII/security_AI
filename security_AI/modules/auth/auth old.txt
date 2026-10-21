@@ -1,0 +1,87 @@
+import numpy as np
+
+
+def sigmoid(x):
+    """
+    Convert score into smooth probability-like value.
+    Helps reduce hard threshold sensitivity.
+    """
+    return 1 / (1 + np.exp(-10 * (x - 0.75)))
+
+
+def compute_quality(face_result, voice_result):
+    """
+    Estimate input quality for adaptive weighting.
+
+    Higher score = more reliable signal.
+    """
+
+    face_quality = face_result.get("score", 0.0)
+    voice_quality = voice_result.get("score", 0.0)
+
+    return face_quality, voice_quality
+
+
+def fuse_authentication(face_result, voice_result):
+    """
+    Adaptive + soft fusion authentication system.
+
+    Returns:
+        {
+            "final_decision": "GRANTED" | "DENIED",
+            "confidence": float,
+            "weights": {...},
+            "details": {...}
+        }
+    """
+
+    # -----------------------------
+    # Step 1: Extract raw scores
+    # -----------------------------
+    face_score = face_result.get("score", 0.0)
+    voice_score = voice_result.get("score", 0.0)
+
+    # -----------------------------
+    # Step 2: Convert to soft scores (probabilities)
+    # -----------------------------
+    face_soft = sigmoid(face_score)
+    voice_soft = sigmoid(voice_score)
+
+    # -----------------------------
+    # Step 3: Compute adaptive weights
+    # (higher quality → higher weight)
+    # -----------------------------
+    face_quality, voice_quality = compute_quality(face_result, voice_result)
+
+    total = face_quality + voice_quality + 1e-6  # avoid division by zero
+
+    face_weight = face_quality / total
+    voice_weight = voice_quality / total
+
+    # -----------------------------
+    # Step 4: Soft fusion
+    # -----------------------------
+    fused_score = (face_soft * face_weight) + (voice_soft * voice_weight)
+
+    # -----------------------------
+    # Step 5: Decision threshold
+    # -----------------------------
+    final_decision = "GRANTED" if fused_score > 0.6 else "DENIED"
+
+    # -----------------------------
+    # Step 6: Structured output
+    # -----------------------------
+    return {
+        "final_decision": final_decision,
+        "confidence": float(fused_score),
+        "weights": {
+            "face_weight": float(face_weight),
+            "voice_weight": float(voice_weight)
+        },
+        "details": {
+            "face_score": face_score,
+            "voice_score": voice_score,
+            "face_soft": float(face_soft),
+            "voice_soft": float(voice_soft)
+        }
+    }

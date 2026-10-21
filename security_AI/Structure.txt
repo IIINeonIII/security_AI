@@ -1,0 +1,58 @@
+security_system/
+│
+├── main.py                     # Runs the full system (camera + voice + decision)
+├── config.py                   # Thresholds, paths, parameters
+│
+├── data/
+│   ├── faces/
+│   │   ├── user1/
+│   │   │   ├── img1.jpg
+│   │   │   ├── img2.jpg
+│   │   │
+│   │   ├── user2/
+│   │
+│   ├── voices/
+│   │   ├── user1/
+│   │   │   ├── sample1.wav
+│   │   │   ├── sample2.wav
+│   │   │
+│   │   ├── user2/
+│   │
+│   └── embeddings/
+│       ├── face_embeddings.npy
+│       ├── face_labels.npy
+│       ├── voice_embeddings.npy
+│       ├── voice_labels.npy
+│
+├── modules/
+│   ├── camera.py               # Webcam handling (OpenCV)
+│   ├── audio.py                # Mic recording
+│   │
+│   ├── face/
+│   │   ├── face_detector.py
+│   │   ├── face_encoder.py
+│   │   ├── face_database.py    # Load/save embeddings
+│   │   └── face_inference.py   # Real-time recognition
+│   │
+│   ├── voice/
+│   │   ├── voice_recorder.py
+│   │   ├── voice_encoder.py
+│   │   ├── voice_database.py
+│   │   └── voice_inference.py
+│   │
+│   └── auth/
+│       └── authentication.py   # Decision logic (GRANTED / DENIED)
+│
+├── utils/
+│   ├── preprocessing.py        # Image/audio preprocessing
+│   ├── distance.py             # Cosine / Euclidean distance
+│   └── logger.py               # Logging access attempts
+│
+├── scripts/
+│   ├── build_face_database.py  # Generate face embeddings
+│   ├── build_voice_database.py # Generate voice embeddings
+│
+├── logs/
+│   └── access_log.txt
+│
+└── requirements.txt
