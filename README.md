@@ -1,5 +1,5 @@
 # security_AI
-AI-Powered Multimodal Biometric Security System
+AI-Powered Multimodal Biometric Security System ( with facial and voice recognition )
 
 
 A Python-based security and access-control project exploring the application of AI in biometric identity verification. The system combines face and voice recognition pipelines with multimodal decision logic to evaluate identity matches and determine whether access should be granted or denied.
